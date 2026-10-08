@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Тиснути чи не тиснути?</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #eaf6ff, #ffffff);
+    color: #17324d;
+}
+
+.game {
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+    padding: 25px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 38px;
+    margin: 5px 0;
+}
+
+.header p {
+    font-size: 19px;
+    margin: 8px 0;
+}
+
+.badges {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 15px 0;
+}
+
+.badge {
+    background: #ffffff;
+    border-radius: 30px;
+    padding: 10px 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    font-weight: bold;
+}
+
+.timer {
+    width: 80px;
+    height: 80px;
+    margin: 15px auto;
+    border-radius: 50%;
+    background: #17324d;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.card {
+    background: white;
+    border-radius: 25px;
+    padding: 30px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.10);
+    margin-top: 15px;
+}
+
+.question-number {
+    color: #1683c7;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.message {
+    background: #f4f8fb;
+    border-left: 6px solid #1683c7;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    font-size: 20px;
+    line-height: 1.55;
+}
+
+.fake-link {
+    background: #fff3f3;
+    padding: 12px;
+    border-radius: 10px;
+    color: #c62828;
+    font-weight: bold;
+    word-break: break-all;
+    margin-top: 12px;
+}
+
+.buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+button {
+    border: none;
+    border-radius: 18px;
+    padding: 18px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.04);
+}
+
+.danger {
+    background: #ffdddd;
+    color: #a71919;
+}
+
+.safe {
+    background: #dff6e5;
+    color: #18743b;
+}
+
+.next {
+    background: #1683c7;
+    color: white;
+}
+
+.result {
+    display: none;
+    text-align: center;
+}
+
+.result h2 {
+    font-size: 34px;
+}
+
+.score {
+    font-size: 55px;
+    font-weight: bold;
+    color: #1683c7;
+}
+
+.explanation {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 18px;
+    font-size: 19px;
+    line-height: 1.5;
+}
+
+.correct {
+    background: #e5f8eb;
+    border: 2px solid #46a867;
+}
+
+.wrong {
+    background: #fff0f0;
+    border: 2px solid #e36b6b;
+}
+
+.rule {
+    margin-top: 25px;
+    background: #17324d;
+    color: white;
+    border-radius: 20px;
+    padding: 22px;
+    font-size: 21px;
+    text-align: center;
+}
+
+.start {
+    text-align: center;
+}
+
+.start button {
+    background: #1683c7;
+    color: white;
+    font-size: 23px;
+    padding: 20px 40px;
+}
+
+.progress {
+    height: 10px;
+    background: #dbe8f1;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #1683c7;
+    transition: 0.3s;
+}
+
+.small {
+    font-size: 15px;
+    color: #607789;
+}
+
+@media(max-width:600px) {
+    .header h1 {
+        font-size: 29px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .message {
+        font-size: 18px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <div class="header">
+        <h1>🎣 ТИСНУТИ ЧИ НЕ ТИСНУТИ?</h1>
+        <p>Фішинг-челендж: врятуй свої гроші за 30 секунд</p>
+
+        <div class="badges">
+            <div class="badge">💰 5 ситуацій</div>
+            <div class="badge">⏱️ 30 секунд</div>
+            <div class="badge">🧠 5 балів</div>
+        </div>
+    </div>
+
+    <!-- СТАРТ -->
+    <div id="startScreen" class="card start">
+
+        <h2>Уяви ситуацію...</h2>
+
+        <p style="font-size:21px; line-height:1.5;">
+            Тобі приходить повідомлення.<br>
+            Воно виглядає справжнім.<br><br>
+
+            Але один необережний клік може коштувати грошей.
+        </p>
+
+        <div class="rule">
+            Твоє завдання:<br>
+            <b>вирішити — НАТИСКАТИ чи НЕ НАТИСКАТИ.</b>
+        </div>
+
+        <br>
+
+        <button onclick="startGame()">
+            🚀 ПОЧАТИ ЧЕЛЕНДЖ
+        </button>
+
+    </div>
+
+
+    <!-- ГРА -->
+    <div id="gameScreen" style="display:none;">
+
+        <div class="badges">
+            <div class="badge">
+                Ситуація: <span id="number">1</span>/5
+            </div>
+
+            <div class="badge">
+                ⭐ Бали: <span id="score">0</span>
+            </div>
+        </div>
+
+        <div class="timer">
+            <span id="timer">30</span>
+        </div>
+
+        <div class="progress">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <div class="card">
+
+            <div class="question-number" id="questionTitle">
+                СИТУАЦІЯ №1
+            </div>
+
+            <div class="message" id="message">
+            </div>
+
+            <div class="buttons">
+
+                <button class="danger" onclick="answer('click')">
+                    🔴 НАТИСНУТИ
+                </button>
+
+                <button class="safe" onclick="answer('no')">
+                    🟢 НЕ НАТИСКАТИ
+                </button>
+
+            </div>
+
+            <div id="explanation" class="explanation"></div>
+
+            <div style="text-align:center; margin-top:20px;">
+
+                <button
+                    id="nextButton"
+                    class="next"
+                    style="display:none;"
+                    onclick="nextQuestion()">
+                    ➡️ НАСТУПНА
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- РЕЗУЛЬТАТ -->
+    <div id="resultScreen" class="card result">
+
+        <h2>🏁 ЧЕЛЕНДЖ ЗАВЕРШЕНО!</h2>
+
+        <p>Твій результат:</p>
+
+        <div class="score">
+            <span id="finalScore">0</span>/5
+        </div>
+
+        <h2 id="finalTitle"></h2>
+
+        <p id="finalText" style="font-size:20px; line-height:1.5;"></p>
+
+        <div class="rule">
+
+            🚨 <b>ПРАВИЛО 30 СЕКУНД</b>
+
+            <br><br>
+
+            <b>ХТО?</b> — хто надіслав?<br>
+            <b>КУДИ?</b> — куди веде посилання?<br>
+            <b>ЧОГО ХОЧУТЬ?</b> — які дані просять?
+
+            <br><br>
+
+            Якщо сумніваєшся — <b>НЕ КЛИКАЙ.</b>
+
+        </div>
+
+        <br>
+
+        <button class="next" onclick="location.reload()">
+            🔄 ПРОЙТИ ЩЕ РАЗ
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const questions = [
+
+{
+    title: "СИТУАЦІЯ №1",
+    message: `
+        🔴 <b>БАНК</b><br><br>
+
+        Виявлено підозрілу операцію
+        на <b>2 800 грн</b>.<br><br>
+
+        Якщо це були не ви —
+        скасуйте операцію протягом
+        <b>10 хвилин</b>:
+        
+        <div class="fake-link">
+        bank-secure.com/cancel
+        </div>
+    `,
+    correct: "no",
+    explanation: `
+        ❌ <b>НЕ НАТИСКАТИ.</b><br><br>
+
+        Тебе змушують поспішати:
+        «підозріла операція» + «10 хвилин».<br><br>
+
+        Це психологічний тиск.
+        Шахрай хоче, щоб ти не встиг подумати.
+    `
+},
+
+{
+    title: "СИТУАЦІЯ №2",
+    message: `
+        💰 <b>ВІТАЄМО!</b><br><br>
+
+        Ви отримали
+        <b>500 грн кешбеку</b> 🎉<br><br>
+
+        Щоб зарахувати кошти,
+        підтвердьте картку:
+
+        <div class="fake-link">
+        bonus-bank.com/500
+        </div>
+    `,
+    correct: "no",
+    explanation: `
+        ❌ <b>НЕ НАТИСКАТИ.</b><br><br>
+
+        Шахрай не лякає тебе —
+        він пропонує гроші.<br><br>
+
+        Але щоб отримати «подарунок»,
+        у тебе просять підтвердити картку.
+        Це серйозний сигнал небезпеки.
+    `
+},
+
+{
+    title: "СИТУАЦІЯ №3",
+    message: `
+        🔐 <b>УВІЙДІТЬ ДО ОСОБИСТОГО КАБІНЕТУ</b><br><br>
+
+        Для підтвердження особи
+        перейдіть за посиланням:
+
+        <div class="fake-link">
+        privat24-login.com
+        </div>
+    `,
+    correct: "no",
+    explanation: `
+        ❌ <b>НЕ НАТИСКАТИ.</b><br><br>
+
+        Назва схожа на справжню,
+        але адреса може належати зовсім іншому сайту.<br><br>
+
+        <b>Логотип можна підробити.
+        Адресу потрібно перевіряти.</b>
+    `
+},
+
+{
+    title: "СИТУАЦІЯ №4",
+    message: `
+        📦 <b>ВАША ПОСИЛКА ГОТОВА ДО ДОСТАВКИ</b><br><br>
+
+        Необхідно сплатити
+        <b>12 грн</b> за повторну доставку.
+
+        <div class="fake-link">
+        nova-poshta-payment.info
+        </div>
+    `,
+    correct: "no",
+    explanation: `
+        ❌ <b>НЕ НАТИСКАТИ.</b><br><br>
+
+        Сума спеціально маленька —
+        <b>12 грн</b> не викликають підозри.<br><br>
+
+        Але шахраям можуть бути потрібні
+        дані твоєї картки, а не ці 12 грн.
+    `
+},
+
+{
+    title: "СИТУАЦІЯ №5",
+    message: `
+        👩‍💼 <b>ОДНОГРУПНИК</b><br><br>
+
+        «Привіт! Я випадково відправив
+        тобі посилання не туди 😅<br><br>
+
+        Можеш просто подивитися,
+        що там?»
+
+        <div class="fake-link">
+        bit.ly/8Xk92Q
+        </div>
+    `,
+    correct: "no",
+    explanation: `
+        ⚠️ <b>КРАЩЕ НЕ НАТИСКАТИ.</b><br><br>
+
+        Навіть якщо повідомлення прийшло
+        від знайомого, його акаунт могли зламати.<br><br>
+
+        Напиши людині окремо й запитай,
+        чи справді вона надсилала посилання.
+    `
+}
+
+];
+
+
+let current = 0;
+let score = 0;
+let time = 30;
+let timerInterval;
+let answered = false;
+
+
+function startGame() {
+
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "block";
+
+    loadQuestion();
+
+}
+
+
+function loadQuestion() {
+
+    answered = false;
+
+    const q = questions[current];
+
+    document.getElementById("number").textContent = current + 1;
+
+    document.getElementById("questionTitle").textContent = q.title;
+
+    document.getElementById("message").innerHTML = q.message;
+
+    document.getElementById("explanation").style.display = "none";
+
+    document.getElementById("nextButton").style.display = "none";
+
+    document.querySelectorAll(".buttons button")
+        .forEach(btn => btn.disabled = false);
+
+    time = 30;
+
+    document.getElementById("timer").textContent = time;
+
+    document.getElementById("progressBar").style.width =
+        ((current) / questions.length * 100) + "%";
+
+    clearInterval(timerInterval);
+
+    timerInterval = setInterval(() => {
+
+        time--;
+
+        document.getElementById("timer").textContent = time;
+
+        if(time <= 0) {
+
+            clearInterval(timerInterval);
+
+            if(!answered) {
+
+                answer("timeout");
+
+            }
+
+        }
+
+    },1000);
+
+}
+
+
+function answer(choice) {
+
+    if(answered) return;
+
+    answered = true;
+
+    clearInterval(timerInterval);
+
+    const q = questions[current];
+
+    let isCorrect = choice === q.correct;
+
+    if(isCorrect) {
+
+        score++;
+
+        document.getElementById("score").textContent = score;
+
+    }
+
+    const explanation =
+        document.getElementById("explanation");
+
+    explanation.style.display = "block";
+
+    explanation.className =
+        "explanation " +
+        (isCorrect ? "correct" : "wrong");
+
+    if(choice === "timeout") {
+
+        explanation.innerHTML =
+        "⏰ <b>Час вийшов!</b><br><br>" +
+        "Саме цього й хоче шахрай — щоб ти діяв поспіхом.<br><br>" +
+        q.explanation;
+
+    } else {
+
+        explanation.innerHTML =
+        (isCorrect
+        ? "✅ <b>Правильно!</b><br><br>"
+        : "❌ <b>Не цього разу.</b><br><br>")
+        + q.explanation;
+
+    }
+
+    document.querySelectorAll(".buttons button")
+        .forEach(btn => btn.disabled = true);
+
+    document.getElementById("nextButton").style.display = "inline-block";
+
+}
+
+
+function nextQuestion() {
+
+    current++;
+
+    if(current >= questions.length) {
+
+        showResult();
+
+    } else {
+
+        loadQuestion();
+
+    }
+
+}
+
+
+function showResult() {
+
+    document.getElementById("gameScreen").style.display = "none";
+
+    document.getElementById("resultScreen").style.display = "block";
+
+    document.getElementById("finalScore").textContent = score;
+
+    let title = "";
+    let text = "";
+
+    if(score === 5) {
+
+        title = "🛡️ ТИ — ФІШИНГ-НІНДЗЯ!";
+
+        text =
+        "Ти не ведешся на паніку, подарунки та підозрілі посилання. " +
+        "Твої гроші мають хороший захист — здоровий глузд.";
+
+    } else if(score >= 3) {
+
+        title = "🔎 НЕ ПОГАНО!";
+
+        text =
+        "Ти вже помічаєш небезпечні сигнали, " +
+        "але перед кліком варто давати собі ще 30 секунд на перевірку.";
+
+    } else {
+
+        title = "🚨 ТРЕБА ЗУПИНИТИСЯ!";
+
+        text =
+        "Шахраї розраховують саме на поспіх. " +
+        "Не натискай одразу — перевір повідомлення іншим способом.";
+
+    }
+
+    document.getElementById("finalTitle").textContent = title;
+
+    document.getElementById("finalText").textContent = text;
+
+}
+
+</script>
+
+</body>
+</html>
